@@ -10,6 +10,7 @@
   function show(login) {
     $('#loginView').hidden = !login;
     $('#dashView').hidden = login;
+    document.body.classList.toggle('in-dash', !login);
   }
   function fmtDate(d) {
     if (!d) return '—';
@@ -37,36 +38,45 @@
 
   function render() {
     var rows = FILTER === 'toutes' ? ROWS : ROWS.filter(function (r) { return r.status === FILTER; });
-    $('#statusLine').textContent = ROWS.length ? (rows.length + ' demande' + (rows.length > 1 ? 's' : '') + (FILTER !== 'toutes' ? ' · filtre « ' + FILTER + ' »' : '')) : 'Aucune demande pour le moment.';
+    $('#statusLine').textContent = ROWS.length
+      ? (rows.length + ' demande' + (rows.length > 1 ? 's' : '') + (FILTER !== 'toutes' ? ' · filtre « ' + FILTER + ' »' : ''))
+      : 'Aucune demande pour le moment.';
     var list = $('#list');
     list.innerHTML = '';
     if (!rows.length) {
-      var p = document.createElement('p');
-      p.className = 'empty';
-      p.textContent = 'Rien à afficher dans ce filtre.';
-      list.appendChild(p);
+      var empty = document.createElement('p');
+      empty.className = 'empty';
+      empty.textContent = 'Rien à afficher dans ce filtre.';
+      list.appendChild(empty);
       return;
     }
     rows.forEach(function (r) {
-      var el = document.createElement('article');
-      el.className = 'item';
       var nights = '';
       if (r.arrival && r.departure) {
         var a = new Date(r.arrival), b = new Date(r.departure);
         var n = Math.round((b - a) / 86400000);
         if (n > 0) nights = ' · ' + n + ' nuit' + (n > 1 ? 's' : '');
       }
-      el.innerHTML =
-        '<div class="row"><span class="badge ' + (r.status || '') + '">' + (r.status || '') + '</span><span class="meta">' + fmtWhen(r.created_at) + '</span></div>' +
-        '<h3></h3>' +
-        '<p class="meta"></p>' +
-        (r.message ? '<p></p>' : '') +
-        '<div class="row">' +
-          (r.phone ? '<a href="tel:' + String(r.phone).replace(/[^\d+]/g, '') + '">Appeler</a>' : '') +
-          '<label>Statut <select></select></label>' +
-        '</div>';
-      el.querySelector('h3').textContent = (r.guest_name || 'Sans nom') + (r.room_type ? ' — ' + r.room_type : '');
-      el.querySelectorAll('p.meta')[1].textContent =
+      var el = document.createElement('article');
+      el.className = 'item';
+
+      var top = document.createElement('div');
+      top.className = 'row';
+      var badge = document.createElement('span');
+      badge.className = 'badge ' + (r.status || '');
+      badge.textContent = r.status || '';
+      var when = document.createElement('span');
+      when.className = 'meta';
+      when.textContent = fmtWhen(r.created_at);
+      top.appendChild(badge);
+      top.appendChild(when);
+
+      var h = document.createElement('h3');
+      h.textContent = (r.guest_name || 'Sans nom') + (r.room_type ? ' — ' + r.room_type : '');
+
+      var details = document.createElement('p');
+      details.className = 'meta';
+      details.textContent =
         (r.arrival ? 'Arrivée ' + fmtDate(r.arrival) : '') +
         (r.departure ? ' · Départ ' + fmtDate(r.departure) : '') +
         nights +
@@ -74,11 +84,31 @@
         ((r.children || 0) > 0 ? ', ' + r.children + ' enfant(s)' : '') +
         (r.phone ? ' · ' + r.phone : '') +
         (r.email ? ' · ' + r.email : '');
-      if (r.message) el.querySelectorAll('p')[el.querySelectorAll('p').length - 1].textContent = 'Message : ' + r.message;
-      var sel = el.querySelector('select');
+
+      el.appendChild(top);
+      el.appendChild(h);
+      el.appendChild(details);
+      if (r.message) {
+        var msg = document.createElement('p');
+        msg.textContent = 'Message : ' + r.message;
+        el.appendChild(msg);
+      }
+
+      var actions = document.createElement('div');
+      actions.className = 'row';
+      if (r.phone) {
+        var call = document.createElement('a');
+        call.href = 'tel:' + String(r.phone).replace(/[^\d+]/g, '');
+        call.textContent = 'Appeler';
+        actions.appendChild(call);
+      }
+      var lab = document.createElement('label');
+      lab.appendChild(document.createTextNode('Statut '));
+      var sel = document.createElement('select');
       ['nouvelle', 'confirmée', 'annulée', 'terminée'].forEach(function (s) {
         var o = document.createElement('option');
-        o.value = s; o.textContent = s;
+        o.value = s;
+        o.textContent = s;
         if (s === r.status) o.selected = true;
         sel.appendChild(o);
       });
@@ -88,6 +118,9 @@
         r.status = sel.value;
         render();
       });
+      lab.appendChild(sel);
+      actions.appendChild(lab);
+      el.appendChild(actions);
       list.appendChild(el);
     });
   }

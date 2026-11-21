@@ -50,3 +50,5 @@ button, .bar-actions a, .filters button {
 @media (max-width: 640px) {
   .bar { flex-direction: column; align-items: flex-start; }
 }
+
+#loginView[hidden], #dashView[hidden] { display: none !important; }
