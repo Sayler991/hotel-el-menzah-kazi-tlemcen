@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Espace gérant — Hôtel El Menzah Kazi</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div id="app">
+    <section class="login" id="loginView">
+      <div class="card">
+        <p class="mark">EM</p>
+        <h1>Espace gérant</h1>
+        <p class="sub">Hôtel El Menzah Kazi — Tlemcen</p>
+        <form id="loginForm">
+          <label>E-mail <input type="email" id="email" autocomplete="username" required></label>
+          <label>Mot de passe <input type="password" id="password" autocomplete="current-password" required></label>
+          <button type="submit" id="loginBtn">Se connecter</button>
+          <p class="err" id="loginErr" hidden></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="dash" id="dashView" hidden>
+      <header class="bar">
+        <div>
+          <strong>Hôtel El Menzah Kazi</strong>
+          <span>Demandes de réservation</span>
+        </div>
+        <div class="bar-actions">
+          <a href="../">Voir le site</a>
+          <button type="button" id="logoutBtn">Déconnexion</button>
+        </div>
+      </header>
+      <div class="filters">
+        <button type="button" class="on" data-st="toutes">Toutes</button>
+        <button type="button" data-st="nouvelle">Nouvelles</button>
+        <button type="button" data-st="confirmée">Confirmées</button>
+        <button type="button" data-st="annulée">Annulées</button>
+        <button type="button" data-st="terminée">Terminées</button>
+        <button type="button" id="refreshBtn" class="ghost">Actualiser</button>
+      </div>
+      <p class="status-line" id="statusLine"></p>
+      <div id="list" class="list"></div>
+    </section>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

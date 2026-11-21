@@ -1,0 +1,7 @@
+-- Schéma déjà appliqué sur le projet Supabase partagé (rvreusugrtiubqtafgbk).
+-- Tables préfixées elmenzah_. Ne pas réexécuter sans vérification.
+-- Ne pas modifier les schémas exposés ni les listes de redirection auth.
+--
+-- public.elmenzah_admins (user_id, created_at)
+-- public.elmenzah_bookings (demandes de réservation)
+-- RLS : insertion publique des nouvelles demandes ; lecture/maj réservées au gérant.
